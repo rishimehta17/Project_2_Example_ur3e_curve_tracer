@@ -1,3 +1,5 @@
 __pycache__/
 *.pyc
 live_plot.png
+!images/live_plot.png
+docs/_build/
