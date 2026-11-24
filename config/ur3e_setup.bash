@@ -1,0 +1,4 @@
+export ROS_DOMAIN_ID=0
+export ROS_LOCALHOST_ONLY=1
+export YOUR_IP=192.168.77.134
+export UR_IP=192.168.77.22

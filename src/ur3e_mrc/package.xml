@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ur3e_mrc</name>
+  <version>0.0.0</version>
+  <description>Package for topics retranslation in ENPM662 lab sections</description>
+  <maintainer email="ipenskiy@umd.edu">Ivan Penskiy</maintainer>
+  <license file="LICENSE">BSD-3-Clause</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <build_depend>boost</build_depend>
+
+  <exec_depend>ros2launch</exec_depend>
+  <exec_depend>Boost</exec_depend>
+
+  <depend>control_msgs</depend>
+  <depend>ur_robot_driver</depend>
+  <depend>ur3e_mrc_msgs</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

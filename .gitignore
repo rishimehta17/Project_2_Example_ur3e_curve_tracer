@@ -1,3 +1,5 @@
+/.vscode
+/old
 __pycache__/
 *.pyc
 live_plot.png

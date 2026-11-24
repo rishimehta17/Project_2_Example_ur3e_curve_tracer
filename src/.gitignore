@@ -1,0 +1,16 @@
+/*
+!.gitignore
+!enpm662_description/
+!enpm662_description/**
+!enpm662_gazebo/
+!enpm662_gazebo/**
+!mrc_gazebo_plugins/
+!mrc_gazebo_plugins/**
+!ur3e_mrc/
+!ur3e_mrc/**
+!ur3e_mrc_sim/
+!ur3e_mrc_sim/**
+!ur3e_mrc_msgs/
+!ur3e_mrc_msgs/**
+!ur3e_curve_tracer/
+!ur3e_curve_tracer/**

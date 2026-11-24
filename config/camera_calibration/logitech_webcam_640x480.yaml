@@ -1,0 +1,26 @@
+image_width: 640
+image_height: 480
+camera_name: logitech_webcam
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [604.029647,    0.     ,  315.447395,
+            0.     , 607.413078,  280.495730,
+            0.     ,    0.     ,    1.     ]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [0.023299, -0.064615, 0.008306, -0.004608, 0.000000]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1., 0., 0.,
+         0., 1., 0.,
+         0., 0., 1.]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [606.774353,    0.     ,  312.754644,    0.     ,
+            0.     , 609.069275,  283.761656,    0.     ,
+            0.     ,    0.     ,    1.     ,    0.     ]

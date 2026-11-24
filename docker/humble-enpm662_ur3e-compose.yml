@@ -1,0 +1,38 @@
+version: "3.9"
+services:
+  enpm662_ur3e-docker:
+    build:
+      context: ..
+      dockerfile: docker/humble-enpm662_ur3e.Dockerfile
+      target: humble-enpm662_ur3e_ws
+      args:
+        - WS_DIR=${WS_DIR}
+        - USERNAME=${USERNAME_DOCKER}
+        - userid=${userid}
+        - groupid=${groupid}
+    container_name: humble-enpm662_ur3e-container
+    environment:
+      - DISPLAY=$DISPLAY
+      - QT_X11_NO_MITSHM=1
+    image: humble-enpm662_ur3e-image:latest
+    # Required for communicating over the network
+    network_mode: "host"
+    ipc: "host"
+    pid: "host"
+    # Required for accessing hardware
+    privileged: true
+    tty: true
+    stdin_open: true
+    # rt kernel access    
+    cap_add:
+      - SYS_NICE
+    ulimits:
+      rtprio: 99
+      rttime: -1
+    volumes:
+      - ../src:/home/${USERNAME_DOCKER}/${WS_DIR}/src
+      - ../config:/home/${USERNAME_DOCKER}/${WS_DIR}/config
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ${XAUTHORITY}:/home/${USERNAME_DOCKER}/.Xauthority
+
+

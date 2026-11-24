@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  enpm662_ur3e-docker:
+    extends:
+      file: humble-enpm662_ur3e-compose.yml
+      service: enpm662_ur3e-docker
+    environment:
+      # GPU access
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - NVIDIA_VISIBLE_DEVICES=all
+    runtime: nvidia

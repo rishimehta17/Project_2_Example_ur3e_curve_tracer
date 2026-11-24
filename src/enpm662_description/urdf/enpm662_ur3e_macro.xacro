@@ -1,0 +1,270 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+
+  <xacro:macro name="enpm662_ur3e" params="
+    parent
+    *origin
+    ur_type
+    tf_prefix
+    joint_limits_parameters_file
+    kinematics_parameters_file
+    physical_parameters_file
+    visual_parameters_file
+    safety_limits
+    safety_pos_margin
+    safety_k_position
+    sim_ignition
+    initial_positions
+    ">
+
+    <joint name="${tf_prefix}stand_base_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="${tf_prefix}stand" />
+    </joint>
+
+    <!-- Define constants -->
+    <xacro:property name="stand_width" value="1.121"/>
+    <xacro:property name="stand_depth" value="0.806"/>
+    <xacro:property name="stand_height" value="0.755"/>
+
+    <xacro:property name="mount_width" value="0.178"/>
+    <xacro:property name="mount_height" value="0.0225"/>    
+
+    <link name="${tf_prefix}stand">
+      <visual>
+        <geometry>
+          <box size="${stand_width} ${stand_depth} ${stand_height}" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 ${(stand_depth-mount_width)/2} ${stand_height/2}"/>
+        <material name="DarkBlue">
+          <color rgba="0.071 0.373 0.694 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${stand_width} ${stand_depth} ${stand_height}" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 ${(stand_depth-mount_width)/2} ${stand_height/2}"/>
+      </collision>
+    </link>
+
+    <link name="${tf_prefix}mount">
+      <visual>
+        <geometry>
+          <box size="${mount_width} ${mount_width} ${mount_height}" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <material name="DarkBlue">
+          <color rgba="0.071 0.373 0.694 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${mount_width} ${mount_width} ${mount_height}" />
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+      </collision>
+    </link>
+    <joint name="${tf_prefix}stand_mount_joint" type="fixed">
+      <parent link="${tf_prefix}stand"/>
+      <child link="${tf_prefix}mount"/>
+      <origin rpy="0 0 0" xyz="0 0 ${stand_height+mount_height/2}"/>
+    </joint>
+
+    <link name="${tf_prefix}wood_top">
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find enpm662_description)/meshes/wood_top/wood_top.stl"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <material name="DarkSand">
+          <color rgba="0.945 0.812 0.043 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="file://$(find enpm662_description)/meshes/wood_top/wood_top.stl"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+      </collision>
+    </link>
+    <joint name="${tf_prefix}stand_wood_top_joint" type="fixed">
+      <parent link="${tf_prefix}stand"/>
+      <child link="${tf_prefix}wood_top"/>
+      <origin rpy="0 0 0" xyz="0 ${-mount_width/2} ${stand_height}"/>
+    </joint>
+
+    <gazebo reference="${tf_prefix}wood_top">
+      <collision>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.3</mu>
+              <mu2>0.3</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+    </gazebo>
+
+<!-- !!!end effector definition!!! -->
+    <link name="${tf_prefix}ee_mount_link">
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find enpm662_description)/meshes/ee_mount/ee_mount.stl"/>
+        </geometry>
+        <material name="VeryDarkGray">
+          <color rgba="0.3 0.3 0.3 1.0"/>
+        </material>        
+        <origin rpy="0.0 ${pi} 0.0" xyz="0.0 0.0 0.008"/>        
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.02 0.04675 0.0435"/>
+        </geometry>
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 ${-(0.0315+0.04675)/2} ${0.0435/2}"/>
+      </collision>
+      <inertial>
+        <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+        <mass value="0.0001"/>
+        <inertia ixx="1e-08" ixy="0" ixz="0" iyy="1e-08" iyz="0" izz="1e-08"/>
+      </inertial>
+    </link>
+    <joint name="${tf_prefix}ee_fixed_joint" type="fixed">
+      <parent link="${tf_prefix}flange" />
+      <child link = "${tf_prefix}ee_mount_link" />
+      <origin rpy="0.0 ${pi/2.0} 0.0" xyz="0 0.0 0.0"/>
+    </joint>
+
+    <gazebo reference="${tf_prefix}ee_fixed_joint">
+      <preserveFixedJoint>true</preserveFixedJoint>
+    </gazebo>
+    <gazebo reference="${tf_prefix}ee_mount_link">
+      <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <link name="${tf_prefix}vac_gripper">
+      <gravity>0</gravity>
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find enpm662_description)/meshes/suction_cup/suction_cup.stl"/>
+        </geometry>
+        <material name="DarkGray">
+          <color rgba="0.4 0.4 0.4 1.0"/>
+        </material>        
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.0145"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${0.0175/2}" length="0.0145"/>
+        </geometry>
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 ${-0.0145/2}"/>
+      </collision>      
+      <inertial>
+        <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+        <mass value="0.0001"/>
+        <inertia ixx="1e-08" ixy="0" ixz="0" iyy="1e-08" iyz="0" izz="1e-08"/>
+      </inertial>
+    </link>
+    <joint name="${tf_prefix}gripper_joint" type="fixed">
+      <!-- <axis xyz="0 0 1" /> -->
+      <parent link="${tf_prefix}ee_mount_link" />
+      <child link="${tf_prefix}vac_gripper" />
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0535 0.058" />
+      <!-- <limit effort="50" velocity="50" lower="0" upper="0" />
+      <dynamics damping="0.0" friction="10"/> -->
+    </joint>
+
+    <gazebo reference="${tf_prefix}gripper_joint">
+      <preserveFixedJoint>true</preserveFixedJoint>
+    </gazebo>
+    <gazebo reference="${tf_prefix}vac_gripper">
+      <material>Gazebo/Black</material>
+    </gazebo>
+
+
+    <!-- Suction sensor vac_gripper-->
+    <link name="suction_link">
+      <gravity>0</gravity>
+      <visual>
+        <geometry>
+          <cylinder radius="0.009" length="0.002"/>
+        </geometry>
+        <material name="suction_red">
+          <color rgba="1.0 0.0 0.0 1.0"/>
+        </material>        
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="0.009" length="0.002"/>
+        </geometry>
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      </collision>
+      <inertial>
+        <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+        <mass value="0.0001"/>
+        <inertia ixx="1e-08" ixy="0" ixz="0" iyy="1e-08" iyz="0" izz="1e-08"/>
+      </inertial>
+    </link>
+    <joint name="suction_joint" type="fixed">
+      <parent link="vac_gripper" />
+      <child link="suction_link" />
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0" />
+    </joint>
+
+    <gazebo reference="suction_joint">
+      <preserveFixedJoint>true</preserveFixedJoint>
+    </gazebo>
+    <gazebo reference="suction_link">
+      <material>Gazebo/Red</material>
+      <collision>
+        <surface>
+          <friction>
+            <ode>
+              <mu>10</mu>
+              <mu2>10</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <sensor name='contact_sensor_0' type='contact'>
+        <update_rate>10</update_rate>
+        <always_on>1</always_on>
+        <contact>
+          <collision>suction_link_collision</collision>
+          <topic>/gripper/contact_sensor_0</topic>
+        </contact>
+      </sensor>      
+    </gazebo>
+
+    <gazebo>
+      <plugin filename="libVacuumGripper.so" name="mrc_gazebo_plugins::VacuumGripperPlugin">
+        <parent_link>suction_link</parent_link>
+        <contact_sensor_topic_prefix>/gripper</contact_sensor_topic_prefix>
+        <command_topic>/gripper/vac_on</command_topic>
+      </plugin>          
+    </gazebo>
+
+    <!--This will create the specific robot-->
+    <xacro:ur_robot
+      name="${ur_type}"
+      tf_prefix="${tf_prefix}"
+      parent="${tf_prefix}mount"
+      joint_limits_parameters_file="${joint_limits_parameters_file}"
+      kinematics_parameters_file="${kinematics_parameters_file}"
+      physical_parameters_file="${physical_parameters_file}"
+      visual_parameters_file="${visual_parameters_file}"
+      safety_limits="${safety_limits}"
+      safety_pos_margin="${safety_pos_margin}"
+      safety_k_position="${safety_k_position}"
+      sim_ignition="${sim_ignition}"
+      initial_positions="${initial_positions}"
+    >
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:ur_robot>
+  </xacro:macro>
+
+</robot>

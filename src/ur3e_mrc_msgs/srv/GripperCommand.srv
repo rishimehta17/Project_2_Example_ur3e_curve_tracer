@@ -1,0 +1,6 @@
+# Input - gripper position: 0 - closed, 100 - open
+# Output - status: 0 - moving, 1 - stopped outer object, 2 - stopped inner object, 3 - at dest
+
+int8 grip_pos
+---
+uint8 grip_status
