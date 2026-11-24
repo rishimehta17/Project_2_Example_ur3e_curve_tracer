@@ -23,8 +23,8 @@ maintained by the Maryland Robotics Center. We use it as-is.
 
 | What | Link |
 |---|---|
-| Docker image and its instructions | [MarylandRoboticsCenter/ENME480_mrc](https://github.com/MarylandRoboticsCenter/ENME480_mrc) |
-| Full setup guide (Ubuntu, Mac, Windows) | [ENME480 setup guide](https://enme480.github.io/ubuntu-setup/) |
+| Docker image and its instructions | [MarylandRoboticsCenter/ENPM662_mrc](https://github.com/MarylandRoboticsCenter/ENPM662_mrc) |
+| Full setup guide (Ubuntu, Mac, Windows) | [ENPM662 setup guide](https://enpm662.github.io/ubuntu-setup/) |
 | Installing Docker on Ubuntu | [docs.docker.com](https://docs.docker.com/engine/install/ubuntu/) |
 
 ### 1.1 Get Ubuntu 22.04
@@ -32,8 +32,8 @@ maintained by the Maryland Robotics Center. We use it as-is.
 | Your computer | What to do |
 |---|---|
 | **Ubuntu 22.04** | Nothing; continue below. |
-| **Mac (Apple Silicon)** | Run Ubuntu 22.04 **ARM64** in a [UTM](https://mac.getutm.app) virtual machine, as the [setup guide](https://enme480.github.io/ubuntu-setup/) explains. Do every step below inside the VM. |
-| **Windows** | Use WSL 2 or a virtual machine, as the [setup guide](https://enme480.github.io/ubuntu-setup/) explains. (Its WSL route needs an NVIDIA GPU.) |
+| **Mac (Apple Silicon)** | Run Ubuntu 22.04 **ARM64** in a [UTM](https://mac.getutm.app) virtual machine, as the [setup guide](https://enpm662.github.io/ubuntu-setup/) explains. Do every step below inside the VM. |
+| **Windows** | Use WSL 2 or a virtual machine, as the [setup guide](https://enpm662.github.io/ubuntu-setup/) explains. (Its WSL route needs an NVIDIA GPU.) |
 | **Lab PC** | Everything is installed already. Skip to [Part 2](#part-2-run-the-curve-tracer). |
 
 ### 1.2 Install Docker (once)
@@ -52,11 +52,11 @@ docker run --rm hello-world
 ### 1.3 Build the course image (once, about 7 GB)
 
 ```bash
-git clone https://github.com/MarylandRoboticsCenter/ENME480_mrc.git ~/ENME480_mrc
-cd ~/ENME480_mrc/docker
+git clone https://github.com/MarylandRoboticsCenter/ENPM662_mrc.git ~/ENPM662_mrc
+cd ~/ENPM662_mrc/docker
 ```
 
-**Mac only:** in `humble-enme480_ur3e.Dockerfile`, change the first `FROM` line, as the setup
+**Mac only:** in `humble-enpm662_ur3e.Dockerfile`, change the first `FROM` line, as the setup
 guide says:
 
 ```dockerfile
@@ -69,19 +69,19 @@ FROM arm64v8/ros:humble AS humble-mod_desktop
 Then build:
 
 ```bash
-userid=$(id -u) groupid=$(id -g) docker compose -f humble-enme480_ur3e-compose.yml build
+userid=$(id -u) groupid=$(id -g) docker compose -f humble-enpm662_ur3e-compose.yml build
 ```
 
-On a PC with an NVIDIA GPU, you can use `humble-enme480_ur3e-nvidia-compose.yml` instead of
-`humble-enme480_ur3e-compose.yml` here and in every command below. Gazebo is faster that way.
+On a PC with an NVIDIA GPU, you can use `humble-enpm662_ur3e-nvidia-compose.yml` instead of
+`humble-enpm662_ur3e-compose.yml` here and in every command below. Gazebo is faster that way.
 
 ### 1.4 What the image gives you
 
 - **Two workspaces inside the container:**
   - `~/ros_ur_driver`: the UR driver and Gazebo simulation. Don't edit it.
-  - `~/enme480_ws`: your workspace.
-- **A shared folder:** `~/ENME480_mrc/src` on your computer **is**
-  `~/enme480_ws/src` in the container. Code you put there is kept when the container stops.
+  - `~/enpm662_ws`: your workspace.
+- **A shared folder:** `~/ENPM662_mrc/src` on your computer **is**
+  `~/enpm662_ws/src` in the container. Code you put there is kept when the container stops.
 
 ---
 
@@ -92,7 +92,7 @@ On a PC with an NVIDIA GPU, you can use `humble-enme480_ur3e-nvidia-compose.yml`
 Clone this repo into the shared `src` folder, on your computer (not in the container):
 
 ```bash
-cd ~/ENME480_mrc/src
+cd ~/ENPM662_mrc/src
 git clone https://github.com/rishimehta17/Project_2_Example_ur3e_curve_tracer.git ur3e_curve_tracer
 ```
 
@@ -102,20 +102,20 @@ The folder must be called `ur3e_curve_tracer`, the ROS package name.
 
 ```bash
 xhost +local:docker                 # allow Gazebo windows from the container
-cd ~/ENME480_mrc/docker
-docker compose -f humble-enme480_ur3e-compose.yml up -d
+cd ~/ENPM662_mrc/docker
+docker compose -f humble-enpm662_ur3e-compose.yml up -d
 ```
 
 Open a terminal in the container. Repeat this for every new terminal:
 
 ```bash
-docker exec -it humble-enme480_ur3e-container bash
+docker exec -it humble-enpm662_ur3e-container bash
 ```
 
 Build, inside the container. Do this once, and again after you change `setup.py`:
 
 ```bash
-cd ~/enme480_ws && colcon build --symlink-install
+cd ~/enpm662_ws && colcon build --symlink-install
 ```
 
 ### 2.3 Run it (3 terminals in the container)
@@ -123,14 +123,14 @@ cd ~/enme480_ws && colcon build --symlink-install
 In **each** terminal, first run:
 
 ```bash
-cd ~/enme480_ws && source install/setup.bash
+cd ~/enpm662_ws && source install/setup.bash
 ```
 
 Then:
 
 ```bash
 # Terminal 1: Gazebo. Wait until the robot appears.
-ros2 launch enme480_gazebo enme480_ur3e_cubes.launch.py
+ros2 launch enpm662_gazebo enpm662_ur3e_cubes.launch.py
 
 # Terminal 2: live plot of the tool path
 ros2 run ur3e_curve_tracer live_plot --ros-args -p use_sim_time:=true
@@ -178,7 +178,7 @@ Restart the live plot before each new curve to get a clean window.
 Close the terminals, then on your computer:
 
 ```bash
-cd ~/ENME480_mrc/docker && docker compose -f humble-enme480_ur3e-compose.yml down
+cd ~/ENPM662_mrc/docker && docker compose -f humble-enpm662_ur3e-compose.yml down
 ```
 
 ---
@@ -217,7 +217,7 @@ The code is commented line by line. Start reading at `main()` in `trace_curve.py
 | Problem | Fix |
 |---|---|
 | `cannot open display` / no Gazebo window | Run `xhost +local:docker` on your computer, then restart the container. |
-| `Package 'ur3e_curve_tracer' not found` | `cd ~/enme480_ws && colcon build --symlink-install && source install/setup.bash` |
+| `Package 'ur3e_curve_tracer' not found` | `cd ~/enpm662_ws && colcon build --symlink-install && source install/setup.bash` |
 | `trace_curve` waits and does nothing | Gazebo isn't fully started yet. Wait, or check terminal 1 for errors. |
 | `docker: permission denied` | You skipped logging out after `usermod`. Log out and back in. |
 | The plot timing looks wrong | Add `--ros-args -p use_sim_time:=true`. |
