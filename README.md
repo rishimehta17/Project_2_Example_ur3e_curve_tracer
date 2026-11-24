@@ -110,9 +110,6 @@ On a PC with an NVIDIA GPU, use `humble-enpm662_ur3e-nvidia-compose.yml` instead
 On your computer (not in the container):
 
 ```bash
-xhost +local:docker                 # allow Gazebo windows from the container
-export XAUTHORITY=${XAUTHORITY:-$HOME/.Xauthority}   # Docker Compose needs this variable set
-touch "$XAUTHORITY"                                  # ...and the file to exist
 cd ~/ENPM662_mrc/docker
 docker compose -f humble-enpm662_ur3e-compose.yml run --rm enpm662_ur3e-docker
 ```
